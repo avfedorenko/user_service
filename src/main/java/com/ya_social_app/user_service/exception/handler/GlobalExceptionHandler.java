@@ -26,6 +26,7 @@ public class GlobalExceptionHandler {
                         error -> ((FieldError) error).getField(),
                         error -> Objects.requireNonNullElse(error.getDefaultMessage(), ""))
                 );
+        log.debug("Catch MethodArgumentNotValidException: {}", errors);
         return new ErrorResponse("Validation error", errors);
     }
 
@@ -34,12 +35,14 @@ public class GlobalExceptionHandler {
     public ErrorResponse handleValidationExceptions(DataValidationException e) {
         Map<String, String> errors = new HashMap<>();
         errors.put(e.getField(), e.getMessage());
+        log.debug("Catch DataValidationException: {}", errors);
         return new ErrorResponse("Validation error", errors);
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleEntityNotFoundException(EntityNotFoundException e) {
+        log.debug("Catch EntityNotFoundException: {}", e.getMessage());
         return new ErrorResponse(e.getMessage());
     }
 

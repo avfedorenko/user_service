@@ -4,14 +4,17 @@ import com.ya_social_app.user_service.dto.UserDto;
 import com.ya_social_app.user_service.exception.DataValidationException;
 import com.ya_social_app.user_service.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class UserValidator {
     private final UserRepository userRepository;
 
     public void validateCreatedUser(UserDto userDto) {
+        log.debug("Call validateCreatedUser for: {}", userDto);
         if (userDto.getId() != null) {
             throw new DataValidationException("id", "Id should be null for created user");
         }

@@ -7,6 +7,7 @@ import com.ya_social_app.user_service.repository.UserRepository;
 import com.ya_social_app.user_service.validator.UserValidator;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,6 +15,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserService {
     private final UserMapper userMapper;
     private final UserRepository userRepository;
@@ -24,20 +26,25 @@ public class UserService {
         userValidator.validateCreatedUser(userDto);
         User user = userMapper.toEntity(userDto);
         User createdUser = userRepository.save(user);
+        log.info("Created user: {}", createdUser);
         return userMapper.toDto(createdUser);
     }
 
     public UserDto getUserById(Long id) {
         User requestedUser = getUserEntityById(id);
+        log.debug("Got user: {}", requestedUser);
         return userMapper.toDto(requestedUser);
     }
 
     public User getUserEntityById(Long id) {
         Optional<User> userOptional = userRepository.findById(id);
         if (userOptional.isEmpty()) {
-            throw new EntityNotFoundException(String.format("User with id %s not found", id));
+            log.debug("User not found with id: {}", id);
+            throw new EntityNotFoundException(String.format("User not found with id: %s", id));
         } else {
-            return userOptional.get();
+            User user = userOptional.get();
+            log.debug("Got user from database: {}", user);
+            return user;
         }
     }
 }
