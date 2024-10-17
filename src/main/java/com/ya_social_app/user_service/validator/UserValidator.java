@@ -12,14 +12,22 @@ public class UserValidator {
     private final UserRepository userRepository;
 
     public void validateCreatedUser(UserDto userDto) {
+        if (userDto.getId() != null) {
+            throw new DataValidationException("id", "Id should be null for created user");
+        }
         validateUsername(userDto);
+        validateEmail(userDto);
     }
 
     private void validateUsername(UserDto userDto) {
-        if (userRepository.existsUserByUsername(userDto.getUsername())){
-            throw new DataValidationException("Username is already taken");
+        if (userRepository.existsUserByUsername(userDto.getUsername())) {
+            throw new DataValidationException("username", "Username is already taken");
         }
     }
 
-
+    private void validateEmail(UserDto userDto) {
+        if (userRepository.existsUserByEmail(userDto.getEmail())) {
+            throw new DataValidationException("email", "Email is already taken");
+        }
+    }
 }

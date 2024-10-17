@@ -10,11 +10,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class UserService {
-    private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final UserRepository userRepository;
     private final UserValidator userValidator;
 
     @Transactional
@@ -31,7 +33,11 @@ public class UserService {
     }
 
     public User getUserEntityById(Long id) {
-        return userRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(String.format("User with id %s not found", id)));
+        Optional<User> userOptional = userRepository.findById(id);
+        if (userOptional.isEmpty()) {
+            throw new EntityNotFoundException(String.format("User with id %s not found", id));
+        } else {
+            return userOptional.get();
+        }
     }
 }
